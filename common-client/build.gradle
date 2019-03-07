@@ -1,0 +1,17 @@
+apply plugin: 'kotlin-platform-common'
+apply plugin: 'kotlinx-serialization'
+
+dependencies {
+    compile project(':common')
+    implementation dep.kotlin_stdlib_common
+    compile dep.kotlin_stdlib_js
+    compile dep.kotlin_serializatoin_js
+    implementation dep.coroutines_common
+    testImplementation dep.kotlin_test_common
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

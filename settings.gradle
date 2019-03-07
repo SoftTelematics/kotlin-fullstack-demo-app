@@ -1,0 +1,7 @@
+enableFeaturePreview('GRADLE_METADATA') // Required by coroutines https://github.com/Kotlin/kotlinx.coroutines/blob/develop/native/README.md
+
+rootProject.name = 'kotlin-fullstack-demo-app'
+include 'web'
+include 'backend'
+include 'common'
+include 'common-client'

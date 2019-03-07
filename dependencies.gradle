@@ -1,0 +1,73 @@
+ext {
+    // Common
+    coroutines_version = '1.1.1'
+    serialization_version = '0.10.0'
+    // JVM
+    retrofit_version = '2.3.0'
+    coroutines_retrofit_version = '1.0.0'
+    okhttp_version = '3.6.0'
+    gson_version = '2.8.2'
+    junit_version = '4.12'
+    mockk_version = "1.7.2"
+    joda_time_version = "2.9.9"
+
+    // JS
+    kotlinx_html_version = '0.6.12'
+    react_version = '16.4.2-pre.38-kotlin-1.2.60'
+    react_dom_version = '16.4.2-pre.38-kotlin-1.2.60'
+    react_router_version = '4.3.1-pre.38-kotlin-1.2.60'
+
+    // Ring UI
+
+    // Backend
+    squash_version = '0.2.3'
+    ktor_version = '0.9.0'
+    hikari_version = '2.7.2'
+    postgresql_version = '42.2.2'
+    sendgrid_version = '3.0.9'
+    logback_version = '1.2.3'
+    jooq_version = '3.11.7'
+
+    dep = [
+            kotlin_stdlib_common       : "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version",
+            kotlin_stdlib_jre7         : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+            kotlin_stdlib_jre8         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
+            kotlin_stdlib_js           : "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version",
+            serialization_common       : "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version",
+            coroutines_common          : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version",
+            kotlin_test_common         : ["org.jetbrains.kotlin:kotlin-test-common:$kotlin_version",
+                                          "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlin_version"],
+
+            // JS
+            kotlin_test_js             : ["org.jetbrains.kotlin:kotlin-test-js:$kotlin_version",
+                                          "org.jetbrains.kotlin:kotlin-test:$kotlin_version"],
+            coroutines_js              : "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutines_version",
+            kotlin_serializatoin_js    : "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serialization_version",
+            kotlinx_html               : "org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version",
+            kotlin_react               : ["org.jetbrains:kotlin-react:$react_version",
+                                          "org.jetbrains:kotlin-react-dom:$react_dom_version",
+                                          "org.jetbrains:kotlin-react-router-dom:$react_router_version"],
+            // Ring UI
+            ring_ui                    : ["org.webjars.npm:github-com-JetBrains-ring-ui:0.2.33"],
+
+            // JVM
+            coroutines_jvm             : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version",
+            coroutines_reactor_jvm     : "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutines_version",
+            retrofit                   : ["com.squareup.retrofit2:retrofit:$retrofit_version",
+                                          "com.squareup.retrofit2:converter-gson:$retrofit_version",
+                                          "com.squareup.retrofit2:converter-scalars:$retrofit_version",
+                                          "com.squareup.okhttp3:okhttp:$okhttp_version",
+                                          "com.squareup.okhttp3:logging-interceptor:$okhttp_version",
+                                          "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:$coroutines_retrofit_version"],
+            gson                       : "com.google.code.gson:gson:$gson_version",
+            junit                      : "junit:junit:$junit_version",
+            kotlin_junit               : ["org.jetbrains.kotlin:kotlin-test:$kotlin_version",
+                                          "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"],
+            kotlin_serialization_jvm   : "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version",
+            mockk                      : "io.mockk:mockk:$mockk_version",
+            joda_time                  : "joda-time:joda-time:$joda_time_version",
+
+            // Backend
+            logback                    : "ch.qos.logback:logback-classic:$logback_version",
+    ]
+}

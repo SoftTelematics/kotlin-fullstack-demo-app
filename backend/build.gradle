@@ -1,0 +1,121 @@
+group "kotlin-fullstack-demo-app"
+version "1.1"
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'kotlin-spring'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'kotlinx-serialization'
+
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+	expectedBy project(':common')
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+	implementation dep.kotlin_serialization_jvm
+	implementation 'org.flywaydb:flyway-core'
+	implementation dep.coroutines_jvm
+	
+	runtimeOnly "org.postgresql:postgresql:${postgresql_version}"
+
+	compile "com.zaxxer:HikariCP:3.1.0"
+	compile "org.jooq:jooq:${jooq_version}"
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
+
+compileTestKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs "${buildDir}/generated-sources/jooq"
+		}
+	}
+}
+
+compileKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
+
+compileTestKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
+
+task jooq {
+	doLast {
+		println("DB env:")
+		println("DB_URL: " + dbUrl)
+		println("DB_USER: " + dbUser)
+
+		def writer = new StringWriter()
+		def xml = new groovy.xml.MarkupBuilder(writer)
+				.configuration('xmlns': "http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd") {
+			jdbc() {
+				driver('org.postgresql.Driver')
+				url(dbUrl)
+				user(dbUser)
+				password(dbPassword)
+			}
+			generator() {
+				strategy() {
+					name('org.jooq.codegen.example.JPrefixGeneratorStrategy')
+				}
+				database() {
+					excludes('ST_.*|_ST.*')
+					name("org.jooq.meta.postgres.PostgresDatabase")
+					schemata() {
+						schema() { inputSchema("public") }
+						schema() { inputSchema("placeholder") }
+					}
+				}
+
+				generate([:]) {
+					pojos true
+					daos true
+				}
+				target() {
+					packageName('my.mpp.jooq')
+					directory("${buildDir}/generated-sources/jooq")
+					directory(projectDir.absolutePath + '/src/main/java')
+					encoding("UTF-8")
+				}
+			}
+		}
+
+		org.jooq.codegen.GenerationTool.generate(
+				javax.xml.bind.JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.meta.jaxb.Configuration.class)
+		)
+	}
+}

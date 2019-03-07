@@ -1,0 +1,69 @@
+group "kotlin-fullstack-demo-app"
+version "1.1"
+
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'org.jetbrains.kotlin.frontend'
+apply plugin: 'kotlin2js'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'kotlin-dce-js'
+
+kotlinFrontend {
+    downloadNodeJsVersion = '10.0.0'
+
+    npm {
+        dependency("webpack-cli", "v2.0.12")
+        dependency("uglifyjs-webpack-plugin")
+        dependency("react", "16.4.2")
+        dependency("react-dom", "16.4.2")
+        dependency("react-router-dom", "4.2.2")
+        dependency("@jetbrains/ring-ui")
+    }
+
+    sourceMaps = true
+
+    webpackBundle {
+        sourceMapEnabled = true
+        bundleName = "main"
+        contentPath = file('src/main/web')
+        proxyUrl = "http://localhost:8080"
+    }
+}
+
+dependencies {
+    expectedBy project(':common')
+    expectedBy project(':common-client')
+    compile dep.kotlin_stdlib_js
+    compile(dep.kotlinx_html) { force = true }
+    compile dep.coroutines_js
+    compile dep.kotlin_serializatoin_js
+    compile dep.kotlin_react
+    compile dep.kotlin_test_js
+}
+
+compileKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.outputFile = "$project.buildDir.path/js/${project.name}.js"
+    kotlinOptions.sourceMap = true
+    kotlinOptions.sourceMapEmbedSources = "always"
+    kotlinOptions.moduleKind = 'commonjs'
+    kotlinOptions.main = "call"
+}
+
+[compileKotlin2Js, compileTestKotlin2Js]*.configure {
+    kotlinOptions {
+        sourceMap = true
+        sourceMapEmbedSources = "always"
+        moduleKind = 'commonjs'
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.kotlin
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+runDceKotlinJs.dceOptions.devMode = false

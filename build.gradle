@@ -1,0 +1,85 @@
+plugins {
+    id "jmfayard.github.io.gradle-kotlin-dsl-libs" version "0.2.1"
+}
+
+allprojects {
+    def isRoot = it == it.rootProject
+
+    buildscript {
+        ext {
+            kotlin_version = '1.3.21'
+            kotlin_native_version = "0.8.1"
+            spring_boot_version = '2.2.0.BUILD-SNAPSHOT'
+            postgres_version = '42.2.2'
+            jooq_version = '3.11.7'
+
+            dbHost = System.getenv("host")
+            dbPort = System.getenv("port")
+            dbName = System.getenv("name")
+            dbUser = System.getenv("user")
+            dbPassword = System.getenv("password")
+            dbUrl = "jdbc:postgresql://${dbHost}:${dbPort}/${dbName}"
+        }
+
+        if (isRoot) return
+        // avoid error "Cannot change dependencies of configuration ':classpath' after it has been resolved."
+
+        repositories {
+            maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+            maven { url "https://kotlin.bintray.com/kotlinx" }
+            maven { url 'https://maven.google.com' }
+            maven { url "https://plugins.gradle.org/m2/" }
+            maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+            maven { url 'https://maven.fabric.io/public' }
+            maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+            maven { url 'https://repo.spring.io/snapshot' }
+            maven { url 'https://repo.spring.io/milestone' }
+            jcenter()
+            mavenCentral()
+            mavenLocal()
+            google()
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$kotlin_native_version"
+            classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.37"
+            classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+            classpath "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12"
+            classpath 'com.moowork.gradle:gradle-node-plugin:1.2.0'
+            classpath 'io.fabric.tools:gradle:1.25.4'
+
+            classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
+            classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlin_version}"
+
+            classpath "org.postgresql:postgresql:${postgres_version}"
+            classpath "org.jooq:jooq-codegen:${jooq_version}"
+        }
+
+    }
+    repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url 'https://maven.google.com' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "http://dl.bintray.com/kotlinx/kotlinx" }
+        maven { url "http://dl.bintray.com/hypnosphi/kotlin-wrappers" }
+        maven { url "http://dl.bintray.com/hypnosphi/kotlin-js-wrappers" }
+        maven { url "https://kotlin.bintray.com/kotlin-js-wrappers/" }
+        mavenCentral()
+        jcenter()
+    }
+    tasks.withType(Test) {
+        testLogging {
+            showStandardStreams = true
+            events "passed", "failed"
+        }
+    }
+}
+
+task serverPrepare(type: Copy, dependsOn: [":web:build", ":web:bundle"]) {
+    doFirst { delete "$rootDir/backend/static" }
+    from "$rootDir/web/build/bundle", "$rootDir/web/src/main/web"
+    into "$rootDir/backend/static/static"
+    finalizedBy ":backend:build"
+}
+
+apply from: 'dependencies.gradle'
